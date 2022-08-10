@@ -649,13 +649,12 @@ class ORTModelForTokenClassification(ORTModel):
         onnx_inputs = {
             "input_ids": input_ids.cpu().detach().numpy(),
             "attention_mask": attention_mask.cpu().detach().numpy(),
+            "bbox" = bbox.cpu().detach().numpy(),
+            "pixel_values" = pixel_values.cpu().detach().numpy(),  
         }
         if token_type_ids is not None:
             onnx_inputs["token_type_ids"] = token_type_ids.cpu().detach().numpy()
-        if token_type_ids is not None:
-            onnx_inputs["bbox"] = bbox.cpu().detach().numpy()
-        if token_type_ids is not None:
-            onnx_inputs["pixel_values"] = pixel_values.cpu().detach().numpy()    
+             
         # run inference
         outputs = self.model.run(None, onnx_inputs)
         logits = torch.from_numpy(outputs[self.model_outputs["logits"]]).to(self.device)
